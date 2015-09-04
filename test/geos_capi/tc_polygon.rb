@@ -60,6 +60,24 @@ module RGeo
           assert_equal 0, extra.length , "Should only have x/y's on 0 and 10"
         end
 
+        def test_simplify_preserve_topology()
+          xys1 = [[0.0, 0.0], [5.0, 0.0], [10.0, 0.0], [10.0, 10.0], [5.0, 12.0], [0.0, 10.0], [0.0, 0.0]]
+          xys2 = [[0.1, 0.1], [0.1, 0.6], [0.3, 0.8],  [0.5, 0.5],   [0.7, 0.3],  [0.3, 0.1],  [0.1, 0.1]]
+          
+          points1 = xys1.collect { |x,y| @factory.point(x, y) }
+          points2 = xys2.collect { |x,y| @factory.point(x, y) }
+          
+          ln1 = @factory.line_string(points1)
+          ln2 = @factory.line_string(points2)
+
+          poly = @factory.polygon(ln1,[ln2])
+
+          simplified = poly.simplify_preserve_topology(1)
+          interior_points = simplified.interior_rings[0].points
+
+          assert_equal 5, interior_points.length
+        end
+
         def test_buffer
           polygon_coordinates = [[0.5527864045000421, 3.776393202250021],
                                  [0.7763932022500211, 4.447213595499958],

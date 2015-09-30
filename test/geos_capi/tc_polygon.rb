@@ -144,6 +144,31 @@ module RGeo
 
           assert_equal polygon, buffered_line_string
         end
+
+        def test_is_valid_polygon
+          polygon_coordinates = [[0, 0], [0, 5], [5, 5], [5, 0], [0, 0]]
+          points_arr = polygon_coordinates.map{|v| @factory.point(v[0],v[1])}
+          outer_ring = @factory.linear_ring(points_arr)
+          polygon = @factory.polygon(outer_ring)
+          
+          assert_equal(polygon.is_valid?, true)
+                               
+          polygon_coordinates  = [[-1, -1], [-1, 0], [1, 0], [1, 1], [0, 1], [0, -1], [-1, -1]]
+          points_arr = polygon_coordinates.map{|v| @factory.point(v[0],v[1])}
+          outer_ring = @factory.linear_ring(points_arr)
+          polygon = @factory.polygon(outer_ring)
+          
+          assert_equal(polygon.is_valid?, false)
+        end
+
+        def test_is_valid_reason
+          polygon_coordinates  = [[-1, -1], [-1, 0], [1, 0], [1, 1], [0, 1], [0, -1], [-1, -1]]
+          points_arr = polygon_coordinates.map{|v| @factory.point(v[0],v[1])}
+          outer_ring = @factory.linear_ring(points_arr)
+          polygon = @factory.polygon(outer_ring)
+
+          assert_equal(polygon.is_valid_reason, "Self-intersection[0 0 0]")  
+        end
       end
     end
   end
